@@ -222,7 +222,7 @@ local function ScanHead(localplayer, target)
 	}
 
 	for _, Point in ipairs(vecPoints) do
-		local vTransformed = VectorTransform(Point, boneMatrices)
+		local vTransformed = VectorTransform(Point, boneMatrix)
 		if VisPosHitboxId(target.Player, vLocalPos, vTransformed, HITBOX_HEAD) then
 			target.vPos = vTransformed
 			target.vAngleTo = CalculateAngle(vLocalPos, vTransformed)
