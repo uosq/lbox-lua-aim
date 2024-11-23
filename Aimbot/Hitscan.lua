@@ -37,9 +37,8 @@ local function GetAimPosition(localplayer, weapon)
 end
 
 ---@param localplayer Entity
----@param weapon Entity
-local function GetShootPos(localplayer, weapon)
-	return (localplayer:GetAbsOrigin() + weapon:GetPropVector("m_vecViewOffset[0]"))
+local function GetShootPos(localplayer)
+	return (localplayer:GetAbsOrigin() + localplayer:GetPropVector("m_vecViewOffset[0]"))
 end
 
 ---@param source Vector3
@@ -99,7 +98,7 @@ end
 ---@param weapon Entity
 local function GetTargets(localplayer, weapon)
 	local targets = {}
-	local vLocalPos = GetShootPos(localplayer, weapon)
+	local vLocalPos = GetShootPos(localplayer)
 	local vLocalAngles = engine:GetViewAngles()
 	local players = entities.FindByClass("CTFPlayer")
 
@@ -169,7 +168,6 @@ end
 
 ---@param input Vector3
 ---@param matrix Matrix3x4
----@param output Vector3
 local function VectorTransform(input, matrix)
 	local output = Vector3()
 	for i = 1, 3 do
@@ -181,7 +179,7 @@ end
 ---@param localplayer Entity
 ---@param target Target
 local function ScanHitboxes(localplayer, target)
-	local vLocalPos = GetShootPos(localplayer, localplayer:GetPropEntity("m_hActiveWeapon"))
+	local vLocalPos = GetShootPos(localplayer)
 	if target.Hitbox == HITBOX_SPINE then return target end
 
 	local vHitbox = GetHitboxPos(target.Player, target.Hitbox)
@@ -211,7 +209,7 @@ local function ScanHead(localplayer, target)
 
 	local vMins, vMaxs = hitbox:GetBBMin(), hitbox:GetBBmax()
 
-	local vLocalPos = GetShootPos(localplayer, localplayer:GetPropEntity("m_hActiveWeapon"))
+	local vLocalPos = GetShootPos(localplayer)
 
 	local fScale = 0.8
 
@@ -237,17 +235,17 @@ end
 ---@param target Target
 local function VerifyTarget(localplayer, weapon, target)
 	if target.Hitbox == HITBOX_HEAD then
-		if (not VisPosHitboxIdOut(target.Player, GetShootPos(localplayer, weapon), target.vPos)) or (not ScanHead(localplayer, target)) then
+		if (not VisPosHitboxIdOut(target.Player, GetShootPos(localplayer), target.vPos)) or (not ScanHead(localplayer, target)) then
 			return false
 		end
 
 	elseif target.Hitbox == HITBOX_PELVIS then
-		if (not VisPos(target.Player, GetShootPos(localplayer, weapon), target.vPos)) or (not ScanHitboxes(localplayer, target)) then
+		if (not VisPos(target.Player, GetShootPos(localplayer), target.vPos)) or (not ScanHitboxes(localplayer, target)) then
 			return false
 		end
 
 	else
-		if not VisPos(target.Player, GetShootPos(localplayer, weapon), target.vPos) then
+		if not VisPos(target.Player, GetShootPos(localplayer), target.vPos) then
 			return false
 		end
 	end
